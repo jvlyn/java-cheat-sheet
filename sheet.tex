@@ -1,0 +1,609 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[letter, portrait, margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{setspace}
+\usepackage{changepage}
+\usepackage{graphicx}
+\usepackage{gensymb}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage{minted}
+\usemintedstyle{vs}
+\graphicspath{ {images/} }
+\usepackage{multicol}
+\definecolor{grey}{gray}{0.8}
+\usepackage{enumitem}
+
+\newcommand{\nline}{\vspace{\baselineskip}}
+\renewcommand{\arraystretch}{1.2}
+\definecolor{grey}{gray}{0.8}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Java Cheat Sheet}
+\chead{}
+\rhead{Julie Yuan}
+\renewcommand\headheight{26pt}
+\cfoot{\thepage}
+
+\begin{document}
+\begin{flushleft}
+
+\section{Java Essentials}
+
+\subsection{Primitives vs. Reference Types}
+
+A \textbf{primitive type} is a simple, indecomposable value. Primitive types include \texttt{int}, \texttt{double}, \texttt{char}, \texttt{float}, and \texttt{boolean}.
+
+\begin{center}
+    \texttt{byte} \; \textrightarrow \; \texttt{short} \; \textrightarrow \; \texttt{int} \; \textrightarrow \; \texttt{long} \; \textrightarrow \; \texttt{float} \; \textrightarrow \; \texttt{double}
+\end{center}
+(You can go up the list without \textbf{typecasting}.)
+
+\nline
+
+A \textbf{reference type} represents a memory address rather than the actual item stored at that address. All instances of \textbf{classes} are reference types. For example, \texttt{String} is a reference type.
+
+\nline
+
+\textbf{Declaring} a variable is the process of giving it a specific type. \textbf{Initializing} a variable is the process of giving it a specific value. If you do not initialize a variable, it will revert to its default value (e.g., for \texttt{int} types, this is \texttt{0} and for objects, this is \texttt{null}).
+
+\nline
+
+\textbf{Typecasting} (explicitly) changes the data type of a variable.
+
+\begin{minted}[bgcolor=grey]{java}
+double distance = 9.14;
+int points = (int)distance; // points = 9 (truncation)
+\end{minted}
+
+\textit{Note:} For binary operations, i..e, \texttt{*} or \texttt{+}, the result is given the data type of the most ``complex'' operand (i.e., \texttt{double * int = double}).
+
+\nline
+
+The \textbf{increment} operator can be used in one of two ways.
+
+\begin{minted}[bgcolor=grey]{java}
+int i = 1;
+// pre-increment example
+System.out.println("--i is " + (--i)); // prints 2
+// post-increment example
+System.out.println("i-- is" + (i--)); // prints 2
+\end{minted}
+
+\subsection{Variable Scope}
+
+Variable \textbf{scope} applies to anywhere there are braces in a Java program. For example:
+\begin{minted}[bgcolor=grey]{java}
+for (int i = 0; i < 3; i++) {
+    System.out.println(i); // this is fine
+}
+System.out.println(i) // this is NOT fine
+\end{minted}
+However, if we declare \texttt{i} before the loop:
+\begin{minted}[bgcolor=grey]{java}
+int i;
+for (i = 0; i < 3; i++) {
+    System.out.println(i); // this is fine
+}
+System.out.println(i) // this is also fine
+\end{minted}
+
+Note that the concept of scope also applies to \textbf{local variable} in method definitions: variables declared inside of methods are only available inside that method.
+
+\begin{enumerate}
+    \item Variables declared within for-loops or while loops are only available within the loop.
+    \item Parameters of methods/constructors are only available within that method/constructor.
+    \item Variables declared within a class definition (as data members) are only available within the class (if declared private).
+\end{enumerate}
+
+Note that if, within a method, there is a local variable with the same name as a data member of the class, the local variable takes precedence over the data member. (This is why we use \texttt{this.name} when referring to a \textit{class} data member.)
+
+\subsection{Boolean Expressions, Conditionals}
+
+Example of a compound \texttt{if-else} statement in Java:
+
+\begin{minted}[bgcolor=grey]{java}
+if ((something)&&(another)) {
+    statement1;
+    statement2; }
+else if ((one)||(two)) {
+    statement 3; }
+else {
+    statement 4; }
+\end{minted}
+
+The \texttt{switch} statement in Java:
+
+\begin{minted}[bgcolor=grey]{java}
+switch (stoplightColor) { // where stoplightColor is a string
+    case "green":
+        System.out.println("go");
+        break;
+    case "yellow":
+        System.out.println("yield");
+        break;
+    case "red";
+        System.out.println("stop");
+    default:
+        System.out.println("unknown");
+        break;
+}
+\end{minted}
+
+\subsection{Loops}
+
+There are four types of loops in java. The first type is the standard indefinite \textbf{while loop}.
+
+\begin{minted}[bgcolor=grey]{java}
+while (condition) {
+    do this; }
+\end{minted}
+
+The second is a variant on this loop, called the \textbf{do-while loop}. The difference is that a do-while loop checks the continuation condition after running the contents of the loop body (which ensures that the loop will always run at least once).
+
+\begin{minted}[bgcolor=grey]{java}
+do { some statements; }
+while (condition);
+\end{minted}
+
+The third is the \textbf{for loop}. Note that you can initialize multiple variables and have multiple update operations within the loop control statement (separated by commas).
+
+\begin{minted}[bgcolor=grey]{java}
+for (int i = 0; i <= ubound ; i++) {
+    some statements; }
+\end{minted}
+
+The fourth is the \textbf{for each loop}. Note that this type of loop can only be used on objects which implement the \texttt{Iterable} interface (more on this later).
+
+\begin{minted}[bgcolor=grey]{java}
+for (type obj : iterable) {
+    some statements; }
+\end{minted}
+
+Using a \texttt{break} statement stops the loop entirely while using a \texttt{continue} skips to the next iteration of the loop.
+
+\subsection{Strings and String Operations}
+
+\begin{center}
+\begin{tabular}{ l l }
+\textbf{Method Name} & \textbf{Description} \\
+\texttt{str.charAt(3)} & returns \texttt{char} object at index $3$ \\
+\texttt{str.length()} & returns length of string \\
+\texttt{str.substring(2,4)} & returns the equivalent of \texttt{str[2,4]} \\
+\texttt{str.indexOf(`x')} & returns index of first instance of x \\
+\texttt{str.split(`\textbackslash s')} & splits the string on whitespace and returns an array of strings \\
+\texttt{str.toCharArray()} & returns an array of characters
+\end{tabular}
+\vspace{\baselineskip}
+
+\textbf{Figure 2.} Useful String methods
+\end{center}
+
+Use \texttt{Integer.toString(num)} to convert an integer to a string. Use \texttt{Integer.valueOf("string")} to convert a string to an integer.
+
+\subsection{Wrapper Classes}
+
+A \textbf{wrapper} class is used to convert values of primitive types to objects of their corresponding class types. For example, the \texttt{int} primitive has the \texttt{Integer} wrapper class.
+
+\nline
+
+Two useful wrapper class constants are the \texttt{Integer.MAX\_VALUE} and \texttt{Integer.MIN\_VALUE} constants.
+
+\nline
+
+\begin{minted}[bgcolor=grey]{java}
+double num = 5.0;
+Double objectD = new Double(num); // creates a Double object, "boxing"
+// we are calling the Double constructor on a double primitive
+double r = objectD.doubleValue(); // since we have an obj, we can call methods
+\end{minted}
+
+\subsection{Standard I/O}
+
+To get user input, use a \texttt{Scanner} object.
+
+\begin{minted}[bgcolor=grey]{java}
+import java.util.Scanner;
+Scanner input = new Scanner(System.in);
+type varname = input.nextType();
+\end{minted}
+
+\begin{center}
+\begin{tabular}{ l l }
+\textbf{Method Name} & \textbf{Description} \\
+\texttt{hasNext()} & returns true if more data is present \\
+\texttt{nextInt()} & returns the next entered integer value \\
+\texttt{nextDouble()} & returns the next entered double value \\
+\texttt{next()} & returns the next string \\
+\texttt{nextLine()} & returns the entire entered line as a string \\
+\end{tabular}
+\vspace{\baselineskip}
+
+\textbf{Figure 1.} Useful Scanner methods
+\end{center}
+
+\subsection{Arrays and Array Operations}
+
+\textbf{Arrays} are objects. Note that arrays must be of homogeneous type and have fixed length.
+
+\begin{minted}[bgcolor=grey]{java}
+double[] temps = new double[7]; // sets up an array with seven "slots"
+temps[0] = 36.0;
+int[] values = {3,7,11,15}; // declares and initializes list in one step
+\end{minted}
+
+Remember that for two-dimensional arrays, the first index is the number of ``rows'' and the second index is the number of ``columns''.
+
+\begin{minted}[bgcolor=grey]{java}
+int[][] table = new int[10][6];
+for (int row = 0; row < table.length; row++) { // to iterate over multi-dim array
+    for (int column = 0; column < table[row].length; column++) {
+    }
+}
+// note that table.length == 10!
+\end{minted}
+
+Note that the \texttt{==} operator will test whether two arrays are references to the same object. To test whether two arrays contain the same values, you need to test each value individually.
+
+
+\section{Object-Oriented Design}
+
+Three principles of OOP: encapsulation, inheritance, and polymorphism.
+
+\subsection{Type: Data and Methods}
+
+Classes have \textbf{data members} and \textbf{methods}. Data members determine the characteristics of an instance of the class while methods determine the actions of that instance (i.e., what an object can ``do'').
+
+\subsection{Class and Method Definitions}
+
+Classes have \textbf{accessor} methods (valued methods) and \textbf{mutator} methods (void methods). The essential parts of a method include
+
+\begin{center}
+\begin{tabular}{cccc}
+\texttt{access-modifier} & \texttt{use-modifier} & \texttt{return-type} & \texttt{method-name} \\
+\footnotesize public, private, protected & \footnotesize abstract, final, static & \footnotesize void or type & 
+\end{tabular}
+\end{center}
+
+Every class should also have a \textbf{Constructor} method. Note that the constructor is a public method and has no return type. If you do not define a Constructor, Java will use the default Constructor.
+
+\nline
+
+Note that methods can call other methods within the class definition. 
+
+\begin{minted}[bgcolor=grey]{java}
+public class Name {
+    private String first;
+    private String last;
+    
+    ... // Constructor, other methods, etc
+    
+    public void setFirst(String first) {
+        this.first = first;
+    }
+    
+    public void setLast(String last) {
+        this.last = last;
+    }
+    
+    public void setName(String first, String last) {
+        setFirst(first);
+        setLast(last);
+    }
+}
+\end{minted}
+
+A \texttt{static} data member or method is one that can be accessed without instantiating an object of the class (i.e., you can call it on the class itself). The \texttt{final} modifier indicates that the method or data member cannot be changed by any object of the class or of any derived class.
+
+\nline
+
+The \texttt{protected} modifier indicates that a method/data member can be accessed: (1) by its own class definition, (2) by any derived classes, and (3) any class in the same package.
+
+\nline
+
+\textit{Note:} A nonstatic data member \textbf{cannot} be used within a \texttt{static} method. However, \texttt{static} data members can be used within nonstatic methods.
+
+\subsection{Instantiating/Using Objects}
+
+Objects are \textbf{instantiated} by calling their constructor. Note that a class can have multiple different constructors (with different argument numbers and types). 
+
+\nline
+
+Remember that objects are \textbf{reference} types. This means that the equality operator \texttt{==} tests to see if two variables are references to the \textit{same} object. The only case in which you can (and should) use the equality operator on objects is when you are checking for \texttt{null} types.
+
+\subsection{Composition: Generics and Adapters}
+
+\textbf{Composition} occurs when a class has a data member that is an instance of another class. For example, suppose we had a \texttt{Name} class which stored first and last names as \texttt{String} types. 
+\begin{itemize}
+    \item This is a \textit{has a} relationship (a \texttt{Name} has a first name that is of type \texttt{String}).
+    \item The class must go through the public interface of the class corresponding to the data member.
+\end{itemize}
+
+A \textbf{generic} type is a class with data fields that can be of any \textit{reference} type (i.e., think of it like a ``container''). Note that generics will \textit{not} take primitives.
+
+\begin{minted}[bgcolor=grey]{java}
+public class Point<T> { // T must be an object
+    private T x;
+    private T y;
+
+    public Point(T inX, T inY) {
+        x = inX;
+        y = inY;
+    }
+    
+    public static void main(String[] args) {
+        Point<Integer> start = new Point<Integer>(5,7);
+        Point<Double> end = new Point<Double>(0.5, 0.7);
+        start.setPoint(0.5, 0.5); // this won't work! "start" is expecting integers
+    }
+}
+\end{minted}
+
+An \textbf{adapter} class uses composition to define a new class that has the original class as a data member and redefines (``adapts'') certain methods.
+
+\begin{minted}[bgcolor=grey]{java}
+// derived from the Name class
+public class NickName {
+    private Name nick;
+    
+    public NickName() {
+        nick = new Name();
+    }
+    
+    public void setNickName(String name) {
+        nick.setFirst(name); // uses methods of the Name class!
+    }
+}
+\end{minted}
+
+
+
+\subsection{Inheritance}
+
+\textbf{Inheritance} is a \textit{is a} relationship.
+\begin{itemize}
+    \item Derived classes can use or override all methods of the base class.
+    \item Derived class \textit{cannot} access private data members and methods of the base class.
+\end{itemize}
+
+Note that you should \textit{always} call the superclass constructor using \texttt{super()} in the derived class method. Otherwise, Java will call it for you!
+
+\begin{minted}[bgcolor=grey]{java}
+// suppose we have a Student class which inherits from a Person class
+// also suppose that setName() is defined in the Person class
+public void setStudent(Name studName, int gradYear, String degreeSought) {
+    setName(studName); // must use public interface of super class
+    year = gradYear;
+    degree = degreeSought;
+}
+\end{minted}
+
+All classes are derived from the \texttt{Object} class. Generally, the \texttt{toString()} and \texttt{equals()} methods of this class need to be overridden in your derived class. In fact, if \texttt{equals()} is not re-defined, it will do the same thing as \texttt{==} (compare memory addresses). 
+
+\begin{minted}[bgcolor=grey]{java}
+// tests if two Name objects are equal
+public boolean equals(Object other) {
+    boolean result = false;
+    if (other instanceof Name) { 
+    // "instanceof" tests if the other object is a Name
+        Name otherName = (Name)other; 
+        // other is still an object; need to typecast to Name
+        result = first.equals(otherName.first) && last.equals(otherName.last);
+    }
+    return result;
+}
+\end{minted}
+
+\subsubsection{Overriding vs. Overloading}
+
+\textbf{Overriding} occurs when a derived class re-defines a method present in the super class with the exact same method signature (same name, parameters, etc). 
+
+\begin{itemize}
+    \item By definition, when an overridden method is called on an instance of the derived class, the method body used will be the overridden method.
+    \item If the method is called on an instance of the super class, the original method body will be used.
+    \item You can still access the original method from within the derived class by calling \texttt{super()}.
+    \item Overriding is useful when you want a derived class to implement a different version of the method from what is implemented by the parent class.
+\end{itemize}
+
+\begin{minted}[bgcolor=grey]{java}
+// in Student class
+public String toString() {
+    return id + " " + fullName.toString();
+}
+
+// in CollegeStudent class
+public String toString() {
+    return super.toString() + ", " + degree + ", " + year;
+}
+\end{minted}
+
+\textbf{Overloading} occurs when a new method is defined (either in a derived class or in the original super class) with the same method name but different parameters. 
+
+\begin{itemize}
+    \item Both the overloaded method and the original method are available to the object; Java differentiates by looking at the parameters.
+    \item Overloading is useful when you want a single method to do different things based upon the parameters passed (for example, multiple constructors that take different arguments).
+\end{itemize}
+
+\begin{minted}[bgcolor=grey]{java}
+// in Student class
+
+public void SetStudent(Name studName, String studID) {
+}
+
+// in CollegeStudent class
+
+public void setStudent(Name studName, String studID, int gradYear, String degreeSought) {
+}
+\end{minted}
+
+\subsubsection{Abstract Classes and Interfaces}
+
+An \textbf{abstract class} is a base class for which you don't intend to have objects of that type (i.e., you \textit{cannot} instantiate objects of an abstract class). 
+\begin{itemize}
+    \item An abstract class \textit{can} define methods that it wants all derived classes to either share or override.
+    \item An abstract class can also declare methods without a method body. Doing so forces all derived classes to implement that method. For example, \mint{java}|public abstract void doSomething()|
+    \item Abstract methods cannot be final, static, or private.
+    \item Abstract classes can have a mixture of abstract and ``regular'' methods but any class with even one abstract method must be declared abstract.
+\end{itemize}
+
+An \textbf{interface} is a program component that contains public constants, method signatures, and comments to describe them. Think of an interface like a ``contract'' between the creator of the interface and any class that implements the interface.
+
+\begin{itemize}
+    \item A class that implements an interface must implement \textit{every} method declared in the interface.
+    \item By definition, an interface does not have a constructor or any static methods.
+    \item Constants declared in an interface should be final, static, and public.
+    \item An interface does \textit{not} declare or initialize any data fields.
+\end{itemize}
+
+\begin{minted}[bgcolor=grey]{java}
+public interface Comparable<T> {
+    public int compareTo(T other); // result is a signed integer
+}
+
+public class Circle implements Comparable<Circle> {
+    ...
+    public int compareTo(Circle other) {
+        // method comparing radii of circles
+    }
+}
+\end{minted}
+
+If you have a class that both inherits from a super class and implements an interface, use:
+
+\mint{java}|public class myClass extends anotherClass implements myInterface|
+
+Note that methods can take interfaces as parameters. This means that the method can take any instance of a class implementing that interface as an argument. Furthermore, any variable of an interface type can be assigned to any object of a class implementing that interface.
+
+\nline
+
+Example of an interface versus an example of an abstract class:
+
+\begin{minted}[bgcolor=grey]{java}
+public interface Circular {
+    public void setRadius(double radius);
+    public double getRadius();
+    // note: no data fields!
+}
+
+public abstract class CircularBase {
+    private double radius;
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+    public double getRadius() {
+        return radius;
+    }
+    /* note: because radius is private and derived classes inherit from CircularBase 
+    just like normal inheritance, we need getter/setter methods */
+}
+\end{minted}
+
+\subsection{Polymorphism}
+
+\textbf{Polymorphism} is the idea of that an object can have many types. For example, if we have an \texttt{UGStudent} class which is derived from a \texttt{CollegeStudent} class, which is in turn derived from a \texttt{Student} class, an instance of the \texttt{UGStudent} class is also a \texttt{CollegeStudent} \textit{and} a \texttt{Student}.
+
+\nline
+
+Rule of thumb: Is \texttt{<constructed object>} a \texttt{<declared variable>}?
+
+\begin{minted}[bgcolor=grey]{java}
+Student amy = new CollegeStudent(); // this is fine
+CollegeStudent brad = new Student(); // this is NOT fine
+\end{minted}
+
+A variable's \textbf{static type} is the one that appears in its declaration. It's \textbf{dynamic type} is the type of object that the variable references at the current point in execution (can change and may be different from static type.
+
+\begin{minted}[bgcolor=grey]{java}
+UGStudent ug = new UGStudent(...);
+Student s = ug;
+s.displayAt(2); // calls the UGStudent method because s "remembers" that it is UGStudent
+\end{minted}
+
+Java calls the method corresponding to the object type of the constructor that created \texttt{s} which was the constructor that created \texttt{ug}.
+
+\begin{minted}[bgcolor=grey]{java}
+UGStudent ug = new UGStudent(...);
+Student s = (Student)ug;
+s.displayAt(2); // STILL calls the UGStudent method
+\end{minted}
+
+Note that the \textit{variable} type determines which method names can be accessed. For example, if we had an \texttt{UGStudent} object assigned to a \texttt{Student} variable, we can only call methods from the \texttt{Student} class. However, if a method from the \texttt{Student} class is overridden in the \texttt{UGStudent} class, Java will call the method in the \texttt{UGStudent} class. The tl;dr is that the \textbf{variable type determines the methods that can be accessed while the object type determines the method action that is performed}.
+
+\section{More Advanced Topics}
+
+\subsection{Exceptions}
+
+Java has three types of exceptions.
+
+\begin{itemize}
+    \item \textbf{Checked exceptions} are serious disruptions to program execution. Examples include \texttt{FileNotFoundException}, \texttt{NoSuchMethodException}, and \texttt{ClassNotFoundException}. Checked exceptions \textit{must} be handled.
+    \item \textbf{Runtime exceptions} are the result of logical errors occuring during execution. Examples include \texttt{NoSuchElementException}, \texttt{NullPointerException}, \texttt{ArrayIndexOutOfBoundsException}, and \texttt{IllegalStateException}. Runtime exceptions \textit{do not} need to be handled.
+    \item An \textbf{error} generally means something abnormal happened, for example, the system ran out of memory. (For example, a \texttt{OutOfMemoryError} or \texttt{StackOverflowError}.)
+\end{itemize}
+
+If a method throws a checked exception, you \textit{must} either (1) handle the exception within the method, or (2) declare the exception in the method header (passing the handling onto the client).
+
+\begin{minted}[bgcolor=grey]{java}
+public String readString(File inputFile) throws IOException
+// do it this way if you DO NOT handle it within the method
+\end{minted}
+
+If you want to handle the exception within the method, use a try-catch block.
+
+\begin{minted}[bgcolor=grey]{java}
+File f = new File(inputFile);
+Scanner input;
+try {
+    input = new Scanner(f);
+}
+catch (FileNotFoundException e) {
+    System.out.println(e.getMessage());
+    System.exit(1);
+}
+\end{minted}
+
+To throw an exception, use: \mint{java}|throw new ExceptionName("message")|
+
+\subsection{The Comparable Interface}
+
+Every class that implements the \texttt{Comparable} interface must have a \texttt{compareTo()} method. Calling \texttt{x.compareTo(y)}
+
+\begin{itemize}
+    \item Returns a negative integer if \texttt{x < y}.
+    \item Returns a positive integer if \texttt{x > y}.
+    \item Returns zero if \texttt{x == y}.
+\end{itemize}
+
+For example, the built-in Java \texttt{String} class implements the \texttt{Comparable} interface. This allows us to use \texttt{compareTo()} to compare strings lexicographicaly.
+
+\nline
+
+\textit{Note:} If \texttt{x} and \texttt{y} do not have the same types, \texttt{compareTo()} throws a \texttt{ClassCastException}.
+
+\subsection{The Iterator and Iterable Interfaces}
+
+An \textbf{iterator} is an object which (just as the name might suggest) is used to iterate over a class. Typically, the class in question is an \textbf{abstract data type} (ADT)—more on these later. The \texttt{Iterator} interface should be implemented by any class which defines an iterator.
+
+\begin{minted}[bgcolor=grey]{java}
+public interface Interator<T> {
+    boolean hasNext();
+    T next(); // get next element
+    void remove(); // optional
+}
+\end{minted}
+
+Using the \texttt{Iterable} interface is one way for a class to ``give you'' an iterator. The advantage of implementing \texttt{Iterable} is that it allows you to use the \texttt{for each} loop syntax.
+
+\begin{minted}[bgcolor=grey]{java}
+public interface Iterable<T> {
+    Iterator<T> iterator();
+}
+\end{minted}
+
+\textit{Note} the distinction between \texttt{Iterator} and \texttt{Iterable}. The \texttt{Iterator} interface is implemented by the class in which you define your iterator (i.e., \texttt{LinkedListIterator}) while the \texttt{Iterable} interface is implemented by the client which uses that iterator (i.e., \texttt{LinkedList}).
+
+\end{flushleft}
+\end{document}
